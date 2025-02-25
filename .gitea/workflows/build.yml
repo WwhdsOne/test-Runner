@@ -8,58 +8,32 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    container:
+      image: my-go1.24:latest  # 使用本地基础镜像
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ gitea.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by Gitea!"
-      - run: echo "🔎 The name of your branch is ${{ gitea.ref }} and your repository is ${{ gitea.repository }}."
-
+      - name: Set up git credentials
+        env:
+          GITEA_USER: ${{ secrets.GITEAUSERNAME }}
+          GITEA_TOKEN: ${{ secrets.GITEATOKEN }}
+        run: |
+          git config --global credential.helper store
+          echo "https://${GITEAUSER}:${GITEATOKEN}@your-gitea-instance-url" > ~/.git-credentials
       - name: Checkout code
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git
-          GITEA_USER="Wwhds_one"
-          GITEA_TOKEN="b99926c0529a1cea9bd86c32e9145e9edcb5efcc"
-          git clone "http://47.93.83.136:3000/Wwhds_one/test-Pipeline.git" .
-      - run: echo "💡 The ${{ gitea.repository }} repository has been cloned to the runner."
-
-      - name: Set up Go
-        run: |
-          # 下载并安装 Go
-          wget https://go.dev/dl/go1.21.6.linux-amd64.tar.gz  # 这里使用 Go 1.21.6 版本，你可以根据需要修改
-          sudo rm -rf /usr/local/go
-          sudo tar -C /usr/local -xzf go1.21.6.linux-amd64.tar.gz
-          # 配置环境变量
-          echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
-          source ~/.bashrc
-          # 验证 Go 安装
-          go version
-
-      - name: Cache Go modules
-        run: |
-          # 这里简单说明，不使用 actions/cache 的话，缓存逻辑需要自己实现
-          # 可以将缓存文件保存到指定目录，每次构建前检查是否存在缓存并恢复
-          # 例如：
-          CACHE_DIR=~/go-module-cache
-          if [ -d "$CACHE_DIR" ]; then
-            cp -r $CACHE_DIR ~/go/pkg/mod
-          fi
+        uses: actions/checkout@v4
 
       - name: Update Go dependencies
+        run: go get -u
+
+      - name: Build Go application
+        run: go build -o mygo
+
+      - name: Create and run minimal container
         run: |
-          go get -u || { echo "Failed to update Go dependencies"; exit 1; }
-
-      - name: Tidy Go modules
-        run: |
-          go mod tidy || { echo "Failed to tidy Go modules"; exit 1; }
-
-      - name: Check Docker status
-        run: docker info
-
-      - name: Build Docker image
-        run: docker build -t go-testPipeline .
-        # 构建 Docker 镜像，使用当前目录下的 Dockerfile
-
-      - name: Start Docker container
-        run: docker run -d --name go-testPipeline-container --network host go-testPipeline
-        # 启动 Docker 容器
+          # 创建一个基于 alpine 镜像的临时容器
+          TEMP_CONTAINER_ID=$(docker create alpine:latest)
+          # 将二进制文件复制到临时容器中
+          docker cp mygo $TEMP_CONTAINER_ID:/app/myapp
+          # 提交临时容器为新镜像
+          docker commit -c 'CMD ["/app/myapp"]' $TEMP_CONTAINER_ID mygo:latest
+          # 启动新镜像的容器，使用 --network host 模式并后台运行
+          docker run -d --network host mygo:latest
