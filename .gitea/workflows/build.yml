@@ -34,10 +34,15 @@ jobs:
             ${{ runner.os }}-go-
 
       - name: Update Go dependencies
-        run: go get -u
+        run: |
+          go get -u || { echo "Failed to update Go dependencies"; exit 1; }
 
       - name: Tidy Go modules
-        run: go mod tidy
+        run: |
+          go mod tidy || { echo "Failed to tidy Go modules"; exit 1; }
+
+      - name: Check Docker status
+        run: docker info
 
       - name: Build Docker image
         run: docker build -t go-testPipeline .
