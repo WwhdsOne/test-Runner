@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: Wwhds_one/test-Pipeline
-          token: tnKD34RA3U4drEOWpWBOgqYwTXKf3z6vm6sonPuC
+          token: wwh852456
           # 如果 Gitea 实例使用 HTTP 协议，需要设置这个选项
           fetch-depth: 0
           # 以下两行设置 Gitea 仓库的 URL
