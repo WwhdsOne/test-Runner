@@ -12,7 +12,7 @@ jobs:
       image: my-go1.24:latest  # 使用本地基础镜像
     steps:
       - name: Checkout code
-        run: git clone https://Wwhds_one:c6f04dbb1101109d1f8b05a61eedb68e7ea2b06d@http://47.93.83.136:3000/Wwhds_one/test-Pipeline.git
+        run: git clone http://Wwhds_one:c6f04dbb1101109d1f8b05a61eedb68e7ea2b06d@47.93.83.136:3000/Wwhds_one/test-Pipeline.git
 
       - name: Update Go dependencies
         run: go get -u
