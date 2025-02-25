@@ -10,9 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clean up incorrect git config
-        run: |
-            git config --local --unset-all http.http://47.93.83.136:3000/.extraheader || true
+      - run: echo "🎉 The job was automatically triggered by a ${{ gitea.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by Gitea!"
+      - run: echo "🔎 The name of your branch is ${{ gitea.ref }} and your repository is ${{ gitea.repository }}."
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
@@ -20,12 +21,7 @@ jobs:
           token: wwh852456
           # 如果 Gitea 实例使用 HTTP 协议，需要设置这个选项
           fetch-depth: 0
-          # 以下两行设置 Gitea 仓库的 URL
-          url: http://47.93.83.136:3000/Wwhds_one/test-Pipeline.git
-      - name: Correct git remote
-        run: |
-            cd /workspace/Wwhds_one/test-Pipeline
-            git remote set-url origin http://47.93.83.136:3000/Wwhds_one/test-Pipeline.git
+      - run: echo "💡 The ${{ gitea.repository }} repository has been cloned to the runner."
 
       - name: Set up Go
         uses: actions/setup-go@v4
