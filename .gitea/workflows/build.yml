@@ -18,7 +18,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y git
-          git clone http://Wwhds_one:wwh852456@47.93.83.136:3000/Wwhds_one/test-Pipeline.git .
+          GITEA_USER="Wwhds_one"
+          GITEA_TOKEN="b99926c0529a1cea9bd86c32e9145e9edcb5efcc"
+          git clone "http://47.93.83.136:3000/Wwhds_one/test-Pipeline.git" .
       - run: echo "💡 The ${{ gitea.repository }} repository has been cloned to the runner."
 
       - name: Set up Go
