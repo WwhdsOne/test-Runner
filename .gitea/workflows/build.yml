@@ -10,14 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clean up incorrect git config
-        run: |
-          git config --local --unset-all http.http://47.93.83.136:3000/.extraheader || true
-
-      - name: Set correct git auth config
-        run: |
-          git config --local http.http://47.93.83.136:3000/.extraheader "AUTHORIZATION: basic ${{ secrets.WWHDS_ONE }}"
-
       - name: Checkout code
         uses: actions/checkout@v3
         with:
