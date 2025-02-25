@@ -12,6 +12,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          repository: Wwhds_one/test-Pipeline
+          token: tnKD34RA3U4drEOWpWBOgqYwTXKf3z6vm6sonPuC
+          # 如果 Gitea 实例使用 HTTP 协议，需要设置这个选项
+          fetch-depth: 0
+          # 以下两行设置 Gitea 仓库的 URL
+          url: http://47.93.83.136:3000/Wwhds_one/test-Pipeline.git
 
       - name: Set up Go
         uses: actions/setup-go@v4
