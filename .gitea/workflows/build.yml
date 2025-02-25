@@ -10,26 +10,27 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: my-go1.24:latest  # 使用本地基础镜像
-      network: host
     steps:
       - name: Checkout code
-        run: |
-          git clone http://Wwhds_one:c6f04dbb1101109d1f8b05a61eedb68e7ea2b06d@47.93.83.136:3000/Wwhds_one/test-Pipeline.git
-          cd test-Pipeline
-
+        run: git clone http://Wwhds_one:c6f04dbb1101109d1f8b05a61eedb68e7ea2b06d@47.93.83.136:3000/Wwhds_one/test-Pipeline.git
 
       - name: Update Go dependencies
-        run: go get -u
+        run: | 
+          cd test-Pipeline
+          go get -u
+
 
       - name: Build Go application
-        run: go build -o mygo
+        run: |
+          cd test-Pipeline 
+          go build -o mygo
 
       - name: Create and run minimal container
         run: |
           # 创建一个基于 alpine 镜像的临时容器
           TEMP_CONTAINER_ID=$(docker create alpine:latest)
           # 将二进制文件复制到临时容器中
-          docker cp mygo $TEMP_CONTAINER_ID:/app/myapp
+          docker cp /test-Pipeline/mygo $TEMP_CONTAINER_ID:/app/myapp
           # 提交临时容器为新镜像
           docker commit -c 'CMD ["/app/myapp"]' $TEMP_CONTAINER_ID mygo:latest
           # 启动新镜像的容器，使用 --network host 模式并后台运行
