@@ -15,7 +15,7 @@ jobs:
       - run: echo "🔎 The name of your branch is ${{ gitea.ref }} and your repository is ${{ gitea.repository }}."
 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: Wwhds_one/test-Pipeline
           token: wwh852456
