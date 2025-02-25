@@ -13,7 +13,10 @@ jobs:
       network: host
     steps:
       - name: Checkout code
-        run: git clone http://Wwhds_one:c6f04dbb1101109d1f8b05a61eedb68e7ea2b06d@47.93.83.136:3000/Wwhds_one/test-Pipeline.git
+        run: |
+          git clone http://Wwhds_one:c6f04dbb1101109d1f8b05a61eedb68e7ea2b06d@47.93.83.136:3000/Wwhds_one/test-Pipeline.git
+          cd test-Pipeline
+
 
       - name: Update Go dependencies
         run: go get -u
