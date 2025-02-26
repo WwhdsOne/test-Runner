@@ -8,11 +8,6 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-    container:
-      image: ubuntu:latest
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
-
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
