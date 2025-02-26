@@ -10,6 +10,8 @@ jobs:
     runs-on: self-hosted
     container:
       image: my-go1.24-alpine:latest  # 使用本地基础镜像
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock  # 挂载 Docker 套接字
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
@@ -30,13 +32,29 @@ jobs:
           cd test-Pipeline 
           go build -o mygo
 
-      - name: Create and run minimal container
+      - name: Check for existing Docker container
         run: |
-          # 创建一个基于 alpine 镜像的临时容器
-          TEMP_CONTAINER_ID=$(docker create alpine:latest)
-          # 将二进制文件复制到临时容器中
-          docker cp test-Pipeline/mygo $TEMP_CONTAINER_ID:/app/myapp
-          # 提交临时容器为新镜像
-          docker commit -c 'CMD ["/app/myapp"]' $TEMP_CONTAINER_ID mygo:latest
-          # 启动新镜像的容器，使用 --network host 模式并后台运行
-          docker run -d --network host mygo:latest
+          # 检查名为mygo的容器是否正在运行
+          if docker ps --filter name=mygo --format "{{.Names}}" | grep -q mygo; then
+            # 如果容器正在运行，则停止并移除它
+            docker stop mygo
+            docker rm mygo
+          fi
+
+      - name: Check for existing Docker image
+        run: |
+          # 检查名为mygo的镜像是否存在
+          if docker images --format "{{.Repository}}:{{.Tag}}" | grep -q "mygo:latest"; then
+            # 如果镜像存在，则移除它
+            docker rmi mygo:latest
+          fi
+
+      - name: Build Docker image
+        run: |
+          # 使用 Dockerfile 构建镜像，并指定镜像名称为mygo
+          docker build -t mygo:latest .
+
+      - name: Run Docker container
+        run: |
+          # 启动新镜像的容器，指定容器名称为mygo，使用 --network host 模式并后台运行
+          docker run -d --network host --name mygo mygo:latest
