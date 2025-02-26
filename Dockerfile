@@ -5,7 +5,7 @@ FROM alpine:latest
 RUN mkdir -p /app
 
 # 将编译好的二进制文件复制到容器的 /app 目录下
-COPY test-Pipeline/mygo /app/myapp
+COPY mygo /app/myapp
 
 # 设置工作目录
 WORKDIR /app
