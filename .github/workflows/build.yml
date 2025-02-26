@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     container:
       image: my-go1.24-alpine:latest  # 使用本地基础镜像
     steps:
