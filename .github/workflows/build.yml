@@ -9,15 +9,14 @@ jobs:
   build:
     runs-on: self-hosted
     container:
-      image: golang:1.24-alpine
+      image: ubuntu:latest
     steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'  # 确保版本与预期一致
       - name: Check out repository code
         uses: actions/checkout@v4
-
+      - name: Set up Go 1.24
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'  # 指定要安装的 Go 版本为 1.24
       - name: Update Go dependencies
         run: |
           cd test-Pipeline
