@@ -13,10 +13,10 @@ func main() {
 	// 定义一个GET请求的路由，路径为"/"
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
-			"message": "Hello, Wwh!",
+			"message": "Hello, World!",
 		})
 	})
 
-	// 在本地的8080端口启动服务
+	// 默认在8080端口启动服务器
 	r.Run()
 }

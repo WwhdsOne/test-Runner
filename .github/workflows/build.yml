@@ -9,19 +9,20 @@ jobs:
   build:
     runs-on: self-hosted
     env:
-      ACTIONS_ALLOW_CACHE: false  # 禁用缓存
+      IMAGE_NAME: myapp
+      CONTAINER_NAME: myapp
     steps:
+      # 用于拉取代码
       - name: Check out repository code
         uses: actions/checkout@v4
-
+      # 设置GO语言环境
       - name: Set up Go 1.24
         uses: actions/setup-go@v5
         with:
           go-version: '1.24'
-          # 禁用远程缓存(自己的runner这样可以保证不报错)
-          # https://github.com/actions/setup-go/issues/403 解释了这个问题
+          # 自建Runner需要关闭缓存，否在会报错
+          # 在issue https://github.com/actions/setup-go/issues/403 提及
           cache: false
-
 
       - name: Update Go dependencies
         run: |
@@ -29,31 +30,31 @@ jobs:
           go get -u
 
       - name: Build Go application
-        run: go build -p 2 -ldflags "-w -s" -trimpath -gcflags "all=-l" -o main
+        run: CGO_ENABLED=0 GOOS=linux go build -p 2 -ldflags "-w -s" -trimpath -gcflags "all=-l" -o myapp
 
       - name: Check for existing Docker container
         run: |
-          # 检查名为mygo的容器是否正在运行
-          if docker ps --filter name=mygo --format "{{.Names}}" | grep -q mygo; then
+          # 检查名为${{ env.CONTAINER_NAME }}的容器是否正在运行
+          if docker ps --filter name=${{ env.CONTAINER_NAME }} --format "{{.Names}}" | grep -q${{ env.CONTAINER_NAME ]]; then
             # 如果容器正在运行，则停止并移除它
-            docker stop mygo
-            docker rm mygo
+            docker stop ${{ env.CONTAINER_NAME }}
+            docker rm ${{ env.CONTAINER_NAME }}
           fi
 
       - name: Check for existing Docker image
         run: |
-          # 检查名为mygo的镜像是否存在
-          if docker images --format "{{.Repository}}:{{.Tag}}" | grep -q "mygo:latest"; then
+          # 检查名为${{ env.IMAGE_NAME }}的镜像是否存在
+          if docker images --format "{{.Repository}}:{{.Tag}}" | grep -q "${{ env.IMAGE_NAME }}:latest"; then
             # 如果镜像存在，则移除它
-            docker rmi mygo:latest
+            docker rmi ${{ env.IMAGE_NAME }}:latest
           fi
 
       - name: Build Docker image
         run: |
-          # 使用 Dockerfile 构建镜像，并指定镜像名称为mygo
-          docker build -t mygo:latest .
+          # 使用 Dockerfile 构建镜像，并指定镜像名称为${{ env.IMAGE_NAME }}
+          docker build -t ${{ env.IMAGE_NAME }}:latest .
 
       - name: Run Docker container
         run: |
-          # 启动新镜像的容器，指定容器名称为mygo，使用 --network host 模式并后台运行
-          docker run -d --network host --name mygo mygo:latest
+          # 启动新镜像的容器，指定容器名称为${{ env.CONTAINER_NAME }}，使用 --network host 模式并后台运行
+          docker run -d --network host --name ${{ env.CONTAINER_NAME }} ${{ env.IMAGE_NAME }}:latest
