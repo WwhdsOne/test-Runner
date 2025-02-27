@@ -8,9 +8,13 @@ on:
 jobs:
   build:
     runs-on: self-hosted
+    env:
+      ACTIONS_ALLOW_CACHE: false  # 禁用缓存
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
+      - name: Clear target directory
+        run: rm -rf /home/runner/_work/test-runner/test-runner/*
       - name: Set up Go 1.24
         uses: actions/setup-go@v4
         with:
@@ -21,7 +25,7 @@ jobs:
           go get -u
 
       - name: Build Go application
-        run: go build -o mygo
+        run: go build -p 2 -ldflags "-w -s" -trimpath -gcflags "all=-l" -o main
 
       - name: Check for existing Docker container
         run: |
