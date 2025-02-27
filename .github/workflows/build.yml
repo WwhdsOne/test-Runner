@@ -18,6 +18,10 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.24'
+          # 禁用远程缓存(自己的runner这样可以保证不报错)
+          # https://github.com/actions/setup-go/issues/403 解释了这个问题
+          cache: false
+
 
       - name: Update Go dependencies
         run: |
