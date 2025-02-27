@@ -13,10 +13,21 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
+
       - name: Set up Go 1.24
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: '1.24'  # 指定要安装的 Go 版本为 1.24
+
+      - name: Cache Go modules
+        id: cache-go-modules
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
       - name: Update Go dependencies
         run: |
           export GOPROXY=https://goproxy.cn,direct
