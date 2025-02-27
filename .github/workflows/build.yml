@@ -18,8 +18,6 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.24'
-          check-latest: true
-          cache-dependency-path: "**/*.sum"
 
       - name: Update Go dependencies
         run: |
