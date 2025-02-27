@@ -26,7 +26,7 @@ jobs:
 
       - name: Update Go dependencies
         run: |
-          export GOPROXY=https://goproxy.cn,direct
+          export GOPROXY=https://mirrors.aliyun.com/goproxy
           go get -u
 
       - name: Build Go application
