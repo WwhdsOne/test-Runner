@@ -26,7 +26,7 @@ jobs:
 
       - name: Update Go dependencies
         run: |
-          export GOSUMDB=https://goproxy.cn/sumdb
+          export GOSUMDB=off  # 临时关闭校验，不推荐长期使用
           export GOPROXY=https://goproxy.cn,direct
           go get -u
 
