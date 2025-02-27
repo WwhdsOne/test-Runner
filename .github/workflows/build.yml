@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: self-hosted
+    env:
+      ACTIONS_ALLOW_CACHE: false  # 禁用缓存
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
