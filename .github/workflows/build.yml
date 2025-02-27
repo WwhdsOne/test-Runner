@@ -8,8 +8,6 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-    env:
-      ACTIONS_ALLOW_CACHE: false  # 禁用缓存
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -17,16 +15,9 @@ jobs:
       - name: Set up Go 1.24
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24'  # 指定要安装的 Go 版本为 1.24
-
-      - name: Cache Go modules
-        id: cache-go-modules
-        uses: actions/cache@v4
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+          go-version: '1.24'
+          check-latest: true
+          cache-dependency-path: "**/*.sum"
 
       - name: Update Go dependencies
         run: |
