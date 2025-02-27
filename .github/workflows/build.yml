@@ -35,7 +35,7 @@ jobs:
       - name: Check for existing Docker container
         run: |
           # 检查名为${{ env.CONTAINER_NAME }}的容器是否正在运行
-          if docker ps --filter name=${{ env.CONTAINER_NAME }} --format "{{.Names}}" | grep -q${{ env.CONTAINER_NAME ]]; then
+          if docker ps --filter "name=${{ env.CONTAINER_NAME }}" --format "{{.Names}}" | grep -q "${{ env.CONTAINER_NAME }}"; then
             # 如果容器正在运行，则停止并移除它
             docker stop ${{ env.CONTAINER_NAME }}
             docker rm ${{ env.CONTAINER_NAME }}
